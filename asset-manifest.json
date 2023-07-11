@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/broker/static/css/main.af102a84.css",
+    "main.js": "/broker/static/js/main.fb1128f0.js",
+    "index.html": "/broker/index.html",
+    "main.af102a84.css.map": "/broker/static/css/main.af102a84.css.map",
+    "main.fb1128f0.js.map": "/broker/static/js/main.fb1128f0.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.af102a84.css",
+    "static/js/main.fb1128f0.js"
+  ]
+}
