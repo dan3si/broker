@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.app {
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cars_info {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.calculatePrice_button_wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.calculatePrice_button {
+    padding: 2px 8px;
+    cursor: pointer;
+}
+
+.calculatePrice_button:disabled {
+    cursor: not-allowed;
+}
+
+.price_wrapper {
+    margin-top: 16px;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
