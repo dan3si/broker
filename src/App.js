@@ -18,14 +18,16 @@ function App() {
   const [makes, setMakes] = useState([])
   const [models, setModels] = useState([])
 
+  const [readyToRequestCities, setReadyToRequestCities] = useState(true)
+  const [priceIsLoading, setPriceIsLoading] = useState(false)
+
   const [selectedCityFrom, setSelectedCityFrom] = useState(null)
   const [selectedCityTo, setSelectedCityTo] = useState(null)
   const [selectedYear, setSelectedYear] = useState(null)
   const [selectedMake, setSelectedMake] = useState(null)
   const [selectedModel, setSelectedModel] = useState(null)
-
-  const [readyToRequestCities, setReadyToRequestCities] = useState(true)
-  const [priceIsLoading, setPriceIsLoading] = useState(false)
+  const [selectedTrailerType, setSelectedTrailerType] = useState('open')
+  const [selectedOperability, setSelectedOperability] = useState('running')
 
   return (
     <div className="app">
@@ -48,7 +50,7 @@ function App() {
           setSelectedCityFrom(option)
           setPrice(null)
         }}
-        placeholder="Select departure city"
+        placeholder="Departure city or zip"
       />
 
       <Select
@@ -70,10 +72,10 @@ function App() {
           setSelectedCityTo(option)
           setPrice(null)
         }}
-        placeholder="Select destination city"
+        placeholder="Destination city or zip"
       />
 
-      <div className="cars_info">
+      <div className="car_make_info">
         <Select
           options={years}
           value={selectedYear}
@@ -120,6 +122,68 @@ function App() {
         />
       </div>
 
+      <div className="car_details">
+        <div>
+          Select trailer type:
+
+          <div className="car_details_options">
+            <label className="car_details_option">
+              <input
+                type="radio"
+                checked={selectedTrailerType === 'open'}
+                onChange={() => {
+                  setSelectedTrailerType('open')
+                  setPrice(null)
+                }}
+              />
+              Open
+            </label>
+
+            <label className="car_details_option">
+              <input
+                type="radio"
+                checked={selectedTrailerType === 'enclosed'}
+                onChange={() => {
+                  setSelectedTrailerType('enclosed')
+                  setPrice(null)
+                }}
+              />
+              Enclosed
+            </label>
+          </div>
+        </div>
+
+        <div>
+          Is the car operable?:
+
+          <div className="car_details_options">
+            <label className="car_details_option">
+              <input
+                type="radio"
+                checked={selectedOperability === 'running'}
+                onChange={() => {
+                  setSelectedOperability('running')
+                  setPrice(null)
+                }}
+              />
+              Yes
+            </label>
+
+            <label className="car_details_option">
+              <input
+                type="radio"
+                checked={selectedOperability === 'nonrunning'}
+                onChange={() => {
+                  setSelectedOperability('nonrunning')
+                  setPrice(null)
+                }}
+              />
+              No
+            </label>
+          </div>
+        </div>
+      </div>
+
       <div className="calculatePrice_button_wrapper">
         <button
           className="calculatePrice_button"
@@ -136,7 +200,9 @@ function App() {
               selectedCityTo.value,
               selectedYear.value,
               selectedMake.value,
-              selectedModel.value
+              selectedModel.value,
+              selectedTrailerType,
+              selectedOperability
             )
             
             setPriceIsLoading(false)

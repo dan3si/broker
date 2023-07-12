@@ -83,7 +83,7 @@ export async function getCities(shard) {
         )
 }
 
-export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel) {
+export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, trailerType, operability) {
     //GETTING _WPNONCE PARAMETER
     const _wpnonceRes = await fetch("https://cors-anywhere.herokuapp.com/https://www.montway.com/wp/wp-admin/admin-ajax.php", {
         method: "POST",
@@ -102,7 +102,24 @@ export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel) {
 
 
     //CREATING CALCULATION AND GETTING CALCULATION ID
-    const body = `_wpnonce=${_wpnonce}&_wp_http_referer=%2Fwp%2Fwp-admin%2Fadmin-ajax.php&city_midpoint=&city_from=${cityFrom.city.split(' ').join('+')}%2C+${cityFrom.state}&city_to=${cityTo.city.split(' ').join('+')}%2C+${cityTo.state}&transport_type=open&select_year=${carYear}&vehicle=${carMake}&vehicle_model=${carModel}&operable=running&email_address=myemail123%40gmail.com&selected_shipping_date=2023-07-21&date_value=&telephone=&action=calculator`
+    const body = `
+        _wpnonce=${_wpnonce}&
+        _wp_http_referer=%2Fwp%2Fwp-admin%2Fadmin-ajax.php&
+        city_midpoint=&
+        city_from=${cityFrom.city.split(' ').join('+')}%2C+${cityFrom.state}&
+        city_to=${cityTo.city.split(' ').join('+')}%2C+${cityTo.state}&
+        transport_type=${trailerType}&
+        select_year=${carYear}&
+        vehicle=${carMake}&
+        vehicle_model=${carModel}&
+        operable=${operability}&
+        email_address=myemail123%40gmail.com&
+        selected_shipping_date=2023-07-21&
+        date_value=&
+        telephone=&
+        action=calculator
+    `
+
     const calculationIdRes = await fetch(
         "https://cors-anywhere.herokuapp.com/https://www.montway.com/wp/wp-admin/admin-ajax.php",
         {
