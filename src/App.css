@@ -22,21 +22,6 @@ body {
     gap: 6px;
 }
 
-.calculatePrice_button_wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 24px;
-}
-
-.calculatePrice_button {
-    padding: 2px 8px;
-    cursor: pointer;
-}
-
-.calculatePrice_button:disabled {
-    cursor: not-allowed;
-}
-
 .price_wrapper {
     margin-top: 16px;
     font-size: 20px;
@@ -66,4 +51,49 @@ body {
 
 .car_details_option input {
     cursor: pointer;
+}
+
+.shippingDate_wrapper {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.shippingDate_options {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.shippingDate_option {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.shippingDate_calendar_wrapper {
+    display: flex;
+}
+
+.shippingDate_calendar {
+    max-height: 24px;
+}
+
+
+.calculatePrice_button_wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.calculatePrice_button {
+    padding: 8px 24px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.calculatePrice_button:disabled {
+    cursor: not-allowed;
 }

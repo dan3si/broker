@@ -28,15 +28,39 @@ function App() {
   const [selectedModel, setSelectedModel] = useState(null)
   const [selectedTrailerType, setSelectedTrailerType] = useState('open')
   const [selectedOperability, setSelectedOperability] = useState('running')
+  const [selectedShippingDateOption, setSelectedShippingDateOption] = useState('asap')
+  const [selectedShippingDate, setSelectedShippingDate] = useState(getDateYYYY_MM_DD(0))
+
+  function getDateYYYY_MM_DD(daysAdded = 0) {
+    const laterDate = new Date()
+    laterDate.setDate(laterDate.getDate() + daysAdded)
+
+    return laterDate.toISOString().split('T')[0]
+  }
 
   return (
     <div className="app">
       <Select
         options={citiesFrom}
         onInputChange={shard => {
-          if (shard.length < 3 || !readyToRequestCities) return
+          if (!readyToRequestCities) return
 
-          getCities(shard)
+          const consistsOfLetters = str => str.split('').every(symbol => 'abcdefghijklmnopqrstuvwxyz '.includes(symbol.toLowerCase()))
+          const consistsOfDigits = str => str.split('').every(symbol => '1234567890'.includes(symbol))
+
+          let shardType
+          if (consistsOfLetters(shard)) {
+            shardType = 'city'
+          } else if (consistsOfDigits(shard)) {
+            shardType = 'zip'
+          } else {
+            return
+          }
+
+          if (shard.length < 3) return
+          if (shardType === 'zip' && shard.length !== 5) return
+
+          getCities(shard, shardType)
             .then(cities => {
               const citiesOptions = cities.map(city => ({ label: city.fullName, value: city }))
       
@@ -56,9 +80,24 @@ function App() {
       <Select
         options={citiesTo}
         onInputChange={shard => {
-          if (shard.length < 3 || !readyToRequestCities) return
+          if (!readyToRequestCities) return
 
-          getCities(shard)
+          const consistsOfLetters = str => str.split('').every(symbol => 'abcdefghijklmnopqrstuvwxyz '.includes(symbol.toLowerCase()))
+          const consistsOfDigits = str => str.split('').every(symbol => '1234567890'.includes(symbol))
+
+          let shardType
+          if (consistsOfLetters(shard)) {
+            shardType = 'city'
+          } else if (consistsOfDigits(shard)) {
+            shardType = 'zip'
+          } else {
+            return
+          }
+
+          if (shard.length < 3) return
+          if (shardType === 'zip' && shard.length !== 5) return
+
+          getCities(shard, shardType)
             .then(cities => {
               const citiesOptions = cities.map(city => ({ label: city.fullName, value: city }))
 
@@ -183,6 +222,84 @@ function App() {
           </div>
         </div>
       </div>
+      
+      <div className="shippingDate_wrapper">
+        <div className="shippingDate_options_wrapper">
+          Select preferred shipping date:
+
+          <div className="shippingDate_options">
+            <label className="shippingDate_option">
+              <input
+                type="radio"
+                checked={selectedShippingDateOption === 'asap'}
+                onChange={() => {
+                  setSelectedShippingDateOption('asap')
+                  setSelectedShippingDate(getDateYYYY_MM_DD(0))
+                  setPrice(null)
+                }}
+              />
+              As soon as possible
+            </label>
+
+            <label className="shippingDate_option">
+              <input
+                type="radio"
+                checked={selectedShippingDateOption === 'week'}
+                onChange={() => {
+                  setSelectedShippingDateOption('week')
+                  setSelectedShippingDate(getDateYYYY_MM_DD(7))
+                  setPrice(null)
+                }}
+              />
+              In 1 week
+            </label>
+
+            <label className="shippingDate_option">
+              <input
+                type="radio"
+                checked={selectedShippingDateOption === 'month'}
+                onChange={() => {
+                  setSelectedShippingDateOption('month')
+                  setSelectedShippingDate(getDateYYYY_MM_DD(30))
+                  setPrice(null)
+                }}
+              />
+              In 30 days
+            </label>
+
+            <label className="shippingDate_option">
+              <input
+                type="radio"
+                checked={selectedShippingDateOption === 'other'}
+                onChange={() => {
+                  setSelectedShippingDateOption('other')
+                  setPrice(null)
+                }}
+              />
+              Other
+            </label>
+          </div>
+        </div>
+
+        {selectedShippingDateOption === 'other' && (
+          <div className="shippingDate_calendar_wrapper">
+            <input
+              className="shippingDate_calendar"
+              type="date"
+              min={getDateYYYY_MM_DD()}
+              value={selectedShippingDate}
+              onChange={e => {
+                const suggestedYear = +e.target.value.split('-')[0]
+                const currentYear = +getDateYYYY_MM_DD().split('-')[0]
+
+                if (![currentYear, currentYear + 1].includes(suggestedYear)) return
+
+                setSelectedShippingDate(e.target.value)
+              }}
+            />
+          </div>
+        )}
+      </div>
 
       <div className="calculatePrice_button_wrapper">
         <button
@@ -202,7 +319,8 @@ function App() {
               selectedMake.value,
               selectedModel.value,
               selectedTrailerType,
-              selectedOperability
+              selectedOperability,
+              selectedShippingDate
             )
             
             setPriceIsLoading(false)

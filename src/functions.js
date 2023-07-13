@@ -1,3 +1,5 @@
+import fake_emails from './fake_emails'
+
 export async function getCarMakes(year){
     const res = await fetch(`https://done.ship.cars/makes/?year=${year}`)
     const data = await res.json()
@@ -12,7 +14,7 @@ export async function getCarModels(year, make){
     return data.map(car => car.model)
 }
 
-export async function getCities(shard) {
+export async function getCities(shard, shardType) {
     /*return [
         {
           "fullName": "LOS ANGELES CA 90001",
@@ -56,6 +58,21 @@ export async function getCities(shard) {
         }
       ]*/
 
+    let shardTypeField
+
+    switch (shardType) {
+      case 'city':
+        shardTypeField = 'citystate_suggest'
+        break
+
+      case 'zip':
+        shardTypeField = 'name_suggest'
+        break
+
+      default:
+        console.log('Invalid shard type in getCities() function!')
+    }
+
     const res = await fetch('https://cors-anywhere.herokuapp.com/https://www.montway.com/es/gis/_suggest', {
         method: 'POST',
         headers: { "Authority": "www.montway.com" },
@@ -63,7 +80,7 @@ export async function getCities(shard) {
             city_state: {
                 text: shard,
                 completion: {
-                    field: "citystate_suggest",
+                    field: shardTypeField,
                     fuzzy: { fuzziness: 0 },
                     size: 8
                 }
@@ -73,17 +90,16 @@ export async function getCities(shard) {
     const data = await res.json()
 
     return data
-        .city_state[0]
-        .options
-        .map(option => ({
-                fullName: option.text,
-                city: option._source.payload.city,
-                state: option._source.payload.state
-            })
-        )
+      .city_state[0]
+      .options
+      .map(option => ({
+        fullName: option.text,
+        city: option._source.payload.city,
+        state: option._source.payload.state
+      }))
 }
 
-export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, trailerType, operability) {
+export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, trailerType, operability, shippingDate) {
     //GETTING _WPNONCE PARAMETER
     const _wpnonceRes = await fetch("https://cors-anywhere.herokuapp.com/https://www.montway.com/wp/wp-admin/admin-ajax.php", {
         method: "POST",
@@ -100,8 +116,11 @@ export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, tra
         _wpnonceData.indexOf('/>') - 2,
     )
 
+    console.log(_wpnonceData)
+
 
     //CREATING CALCULATION AND GETTING CALCULATION ID
+    const fake_email = fake_emails[Math.floor(Math.random() * fake_emails.length)]
     const body = `
         _wpnonce=${_wpnonce}&
         _wp_http_referer=%2Fwp%2Fwp-admin%2Fadmin-ajax.php&
@@ -113,12 +132,14 @@ export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, tra
         vehicle=${carMake}&
         vehicle_model=${carModel}&
         operable=${operability}&
-        email_address=myemail123%40gmail.com&
-        selected_shipping_date=2023-07-21&
+        email_address=${fake_email}&
+        selected_shipping_date=${shippingDate}&
         date_value=&
         telephone=&
         action=calculator
-    `
+    `.replace(/\s/g, '')
+
+    console.log(body)
 
     const calculationIdRes = await fetch(
         "https://cors-anywhere.herokuapp.com/https://www.montway.com/wp/wp-admin/admin-ajax.php",
@@ -143,4 +164,5 @@ export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, tra
     const price = priceData.data.attributes.rates[7].price
     
     return price
+    return 1234
 }
