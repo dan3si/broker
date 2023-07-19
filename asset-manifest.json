@@ -1,13 +1,17 @@
 {
   "files": {
-    "main.css": "/broker/static/css/main.a317ce00.css",
-    "main.js": "/broker/static/js/main.636461fe.js",
+    "main.css": "/broker/static/css/main.cb6b65f2.css",
+    "main.js": "/broker/static/js/main.6f735b5f.js",
+    "static/media/background_image.jpg": "/broker/static/media/background_image.4d11982148c906f17f17.jpg",
+    "static/media/phone_icon.png": "/broker/static/media/phone_icon.0a63976f87e2e5936bc8.png",
+    "static/media/logo.png": "/broker/static/media/logo.546e8834fdd61d9ae8b5.png",
+    "static/media/email_icon.png": "/broker/static/media/email_icon.fa91e9810ae5e642de82.png",
     "index.html": "/broker/index.html",
-    "main.a317ce00.css.map": "/broker/static/css/main.a317ce00.css.map",
-    "main.636461fe.js.map": "/broker/static/js/main.636461fe.js.map"
+    "main.cb6b65f2.css.map": "/broker/static/css/main.cb6b65f2.css.map",
+    "main.6f735b5f.js.map": "/broker/static/js/main.6f735b5f.js.map"
   },
   "entrypoints": [
-    "static/css/main.a317ce00.css",
-    "static/js/main.636461fe.js"
+    "static/css/main.cb6b65f2.css",
+    "static/js/main.6f735b5f.js"
   ]
 }
