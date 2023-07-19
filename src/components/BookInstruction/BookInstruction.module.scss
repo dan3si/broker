@@ -1,0 +1,40 @@
+.BookInstruction {
+    padding: 56px 0;
+    background-color:#faf0e6;
+}
+
+.heading {
+    text-align: center;
+    font-size: 32px;
+}
+
+.instruction_points {
+    max-width: 800px;
+    margin: 64px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.instruction_point {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+
+    &:nth-child(2) {
+        padding-left: 40px;
+    }
+
+    &:nth-child(3) {
+        padding-left: 80px;
+    }
+
+    &:nth-child(4) {
+        padding-left: 120px;
+    }
+}
+
+.instruction_point_icon {
+    width: 30px;
+}

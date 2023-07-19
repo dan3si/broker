@@ -7,7 +7,13 @@ return (
     <div className={styles.background}></div>
 
     <div className={styles.content}>
-      <h1 className={styles.heading}>HORNS & HOOVES transportation</h1>
+      <div className={styles.company_info}>
+        <h1 className={styles.heading}>HORNS & HOOVES logistics</h1>
+
+        <p className={styles.company_description}>
+          — Your reliable partner in car transportation
+        </p>
+      </div>
 
       <div className={styles.calculator_wrapper}>
         <Calculator />
