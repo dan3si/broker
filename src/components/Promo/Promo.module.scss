@@ -15,11 +15,12 @@
     position: relative;
     min-height: 100vh;
     z-index: 1;
-    padding: 100px;
-    padding-bottom: 32px;
+    padding: 100px 32px 32px;
     background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: space-around;
+    gap: 48px;
+    flex-wrap: wrap;
 }
 
 .heading {
@@ -28,9 +29,15 @@
     color: rgb(194, 124, 20);
     flex: 1;
     font-family: serif;
+    max-width: 520px;
+
+    @media (max-width: 1060px) {
+        font-size: 54px;
+    }
 }
 
 .calculator_wrapper {
-    max-width: 600px;
+    max-width: 520px;
+    min-width: 380px;
     flex: 1;
 }

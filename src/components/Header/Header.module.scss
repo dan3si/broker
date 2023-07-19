@@ -25,12 +25,15 @@
 .contacts {
     display: flex;
     justify-content: space-between;
-    gap: 24px;
+    gap: 8px 24px;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+    }
 }
 
 .contact {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 8px;
     transition: 0.3s;
