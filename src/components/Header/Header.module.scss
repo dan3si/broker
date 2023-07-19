@@ -1,0 +1,42 @@
+.Header {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 12px 24px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    z-index: 2;
+    color: white;
+    box-shadow: 0px 0px 2px rgb(248, 199, 35);
+}
+
+.logo_wrapper {
+    width: 48px;
+}
+
+.logo {
+    width: 100%;
+}
+
+.contacts {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.contact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    color: #cead37;
+}
+
+.contact_icon {
+    width: 22px;
+}

@@ -71,6 +71,7 @@ export async function getCities(shard, shardType) {
 
       default:
         console.log('Invalid shard type in getCities() function!')
+        return
     }
 
     const res = await fetch('https://cors-anywhere.herokuapp.com/https://www.montway.com/es/gis/_suggest', {
@@ -93,7 +94,7 @@ export async function getCities(shard, shardType) {
       .city_state[0]
       .options
       .map(option => ({
-        fullName: option.text,
+        fullName: option._source.text,
         city: option._source.payload.city,
         state: option._source.payload.state
       }))
@@ -116,9 +117,6 @@ export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, tra
         _wpnonceData.indexOf('/>') - 2,
     )
 
-    console.log(_wpnonceData)
-
-
     //CREATING CALCULATION AND GETTING CALCULATION ID
     const fake_email = fake_emails[Math.floor(Math.random() * fake_emails.length)]
     const body = `
@@ -138,8 +136,6 @@ export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, tra
         telephone=&
         action=calculator
     `.replace(/\s/g, '')
-
-    console.log(body)
 
     const calculationIdRes = await fetch(
         "https://cors-anywhere.herokuapp.com/https://www.montway.com/wp/wp-admin/admin-ajax.php",
@@ -161,8 +157,7 @@ export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, tra
     const calculationURL = `https://cors-anywhere.herokuapp.com/montway.com/partners/api/calculations/${calculationID}`
     const priceRes = await fetch(calculationURL)
     const priceData = await priceRes.json()
-    const price = priceData.data.attributes.rates[7].price
+    const price = priceData.data.attributes.rates[3].price * 0.95
     
     return price
-    return 1234
 }

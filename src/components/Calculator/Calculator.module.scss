@@ -1,0 +1,109 @@
+.Calculator {
+    padding: 24px;
+    border: 2px solid #654321;
+    border-radius: 16px;
+    background-color:#F5F5F5;
+}
+
+.heading {
+    text-align: center;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.cities {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    gap: 32px;
+
+    & > * {
+        flex: 1;
+    }
+}
+
+.car_details {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+
+    & > * {
+        flex: 1;
+    }
+}
+
+.transportation_details {
+    margin-top: 32px;
+    display: flex;
+    justify-content: space-between;
+
+    &__options {
+        display: flex;
+        gap: 16px;
+        margin-top: 4px;
+    }
+
+    &__option {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+
+        input {
+            cursor: pointer;
+        }
+    }
+}
+
+.shippingDate {
+    margin-top: 32px;
+    display: flex;
+    justify-content: space-between;
+
+    &__options {
+        margin-top: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__option {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+    }
+
+    &__calendar_wrapper {
+        display: flex;
+    }
+
+    &_calendar {
+        max-height: 24px;
+    }
+}
+
+.calculatePrice {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+
+    &__calculate_button {
+        padding: 8px 24px;
+        font-size: 16px;
+        cursor: pointer;
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+}
+
+.price {
+    margin-top: 16px;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
