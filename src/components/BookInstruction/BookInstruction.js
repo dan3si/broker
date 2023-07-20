@@ -15,11 +15,13 @@ function BookInstruction() {
             src={money_icon}
             className={styles.instruction_point_icon}
           />
-          Get your price using the <a href="#">calculator</a>
+          <span>
+            Get your price using the <a href="#" className={styles.calculatorLink}>calculator</a>
+          </span>
         </p>
 
         <p className={styles.instruction_point}>
-          <CalendarIcon width="42px" />
+          <CalendarIcon width="30px" />
 
           Press "Book an order" button
         </p>

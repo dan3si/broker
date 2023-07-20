@@ -2,6 +2,7 @@ import styles from './Header.module.scss'
 import logo from '../../images/logo.png'
 import phoneIcon from '../../images/phone_icon.png'
 import emailIcon from '../../images/email_icon.png'
+import cn from 'classnames'
 
 function Header() {
   return (
@@ -22,7 +23,7 @@ function Header() {
           123-456-7890
         </div>
 
-        <div className={styles.contact}>
+        <div className={cn(styles.contact, styles.email)}>
           <img
             className={styles.contact_icon}
             src={emailIcon}

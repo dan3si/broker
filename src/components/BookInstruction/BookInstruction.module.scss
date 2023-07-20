@@ -1,6 +1,6 @@
 .BookInstruction {
-    padding: 56px 0;
-    background-color:#faf0e6;
+    padding: 56px 20px;
+    background-color:#f5f5f5;
 }
 
 .heading {
@@ -9,7 +9,7 @@
 }
 
 .instruction_points {
-    max-width: 800px;
+    max-width: 640px;
     margin: 64px auto 0;
     display: flex;
     flex-direction: column;
@@ -19,22 +19,26 @@
 .instruction_point {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     font-size: 20px;
 
-    &:nth-child(2) {
-        padding-left: 40px;
+    @for $i from 2 through 4 {
+        &:nth-child(#{$i}) {
+            padding-left: 40px * ($i - 1);
+        }
     }
 
-    &:nth-child(3) {
-        padding-left: 80px;
-    }
-
-    &:nth-child(4) {
-        padding-left: 120px;
+    @media (max-width: 750px) {
+        &:nth-child(n) {
+            padding-left: 0;
+        }
     }
 }
 
 .instruction_point_icon {
     width: 30px;
+}
+
+.calculatorLink {
+    color: inherit;
 }

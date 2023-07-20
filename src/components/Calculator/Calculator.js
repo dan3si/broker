@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import styles from './Calculator.module.scss'
+import ContactsScreen from './ContactsScreen'
+import DoneScreen from './DoneScreen'
 import cn from 'classnames'
 import { getPrice, getCities, getCarMakes, getCarModels } from './functions'
 import Select from 'react-select'
 
 function Calculator() {
+  const [activeScreen, setActiveScreen] = useState('quote')
+
   const [price, setPrice] = useState(null)
 
   const [citiesFrom, setCitiesFrom] = useState([])
@@ -44,6 +48,14 @@ function Calculator() {
 
   function consistsOfDigits(str) {
     return str.split('').every(symbol => '1234567890'.includes(symbol))
+  }
+
+  if (activeScreen === 'contacts') {
+    return <ContactsScreen setActiveScreen={setActiveScreen} />
+  }
+
+  if (activeScreen === 'done') {
+    return <DoneScreen setActiveScreen={setActiveScreen} />
   }
 
   return (
