@@ -1,16 +1,7 @@
-import { useState } from 'react'
 import styles from './ContactsScreen.module.scss'
 import cn from 'classnames'
 
-function ContactsScreen({ setActiveScreen }) {
-
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-
-  function consistsOfDigits(str) {
-    return str.split('').every(symbol => '1234567890'.includes(symbol))
-  }
-
+function ContactsScreen({ userEmail, setUserEmail, userPhone, setUserPhone, consistsOfDigits, createOrder }) {
   return (
     <div className={styles.ContactsScreen}>
       <h2 className={styles.heading}>Book an order</h2>
@@ -20,9 +11,9 @@ function ContactsScreen({ setActiveScreen }) {
         <input
           className={cn(styles.textInput, styles.emailInput)}
           placeholder="example@gmail.com"
-          value={email}
+          value={userEmail}
           onChange={e => {
-            setEmail(e.target.value)
+            setUserEmail(e.target.value)
           }}
         />
       </div>
@@ -32,12 +23,12 @@ function ContactsScreen({ setActiveScreen }) {
         <input
           className={cn(styles.textInput, styles.phoneInput)}
           placeholder="123 456 7890"
-          value={phone}
+          value={userPhone}
           onChange={e => {
             if (!consistsOfDigits(e.target.value)) return
-            if (e.target.value.length > 9) return
+            if (e.target.value.length > 10) return
 
-            setPhone(e.target.value)
+            setUserPhone(e.target.value)
           }}
         />
       </div>
@@ -45,7 +36,8 @@ function ContactsScreen({ setActiveScreen }) {
       <div className={styles.submit}>
         <button
           className={styles.submit_button}
-          onClick={() => setActiveScreen('done')}
+          onClick={() => createOrder()}
+          disabled={userPhone.length < 10 || !userEmail}
         >
           SUBMIT
         </button>

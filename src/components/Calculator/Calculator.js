@@ -3,12 +3,13 @@ import styles from './Calculator.module.scss'
 import ContactsScreen from './ContactsScreen'
 import DoneScreen from './DoneScreen'
 import cn from 'classnames'
-import { getPrice, getCities, getCarMakes, getCarModels } from './functions'
+import { getCalculation, getCities, getCarMakes, getCarModels, createOrderRequest } from './functions'
 import Select from 'react-select'
 
 function Calculator() {
   const [activeScreen, setActiveScreen] = useState('quote')
 
+  const [calculationId, setCalculationId] = useState(null)
   const [price, setPrice] = useState(null)
 
   const [citiesFrom, setCitiesFrom] = useState([])
@@ -34,6 +35,8 @@ function Calculator() {
   const [selectedOperability, setSelectedOperability] = useState('running')
   const [selectedShippingDateOption, setSelectedShippingDateOption] = useState('asap')
   const [selectedShippingDate, setSelectedShippingDate] = useState(getDateYYYY_MM_DD(0))
+  const [userEmail, setUserEmail] = useState('')
+  const [userPhone, setUserPhone] = useState('')
 
   function getDateYYYY_MM_DD(daysAdded = 0) {
     const laterDate = new Date()
@@ -50,12 +53,65 @@ function Calculator() {
     return str.split('').every(symbol => '1234567890'.includes(symbol))
   }
 
+  async function createOrder() {
+    const orderStatus = await createOrderRequest(
+      selectedCityFrom.value,
+      selectedCityTo.value,
+      selectedYear.value,
+      selectedMake.value,
+      selectedModel.value,
+      selectedTrailerType,
+      selectedOperability,
+      selectedShippingDate,
+      calculationId,
+      userEmail,
+      userPhone,
+      price
+    )
+
+    setActiveScreen('done')
+    setCalculationId(null)
+    setPricee(null)
+
+    setCitiesFrom([])
+    setCitiesTo([])
+
+    setMakes([])
+    setModels([])
+
+    setSelectedCityFrom(null)
+    setSelectedCityTo(null)
+    setSelectedYear(null)
+    setSelectedMake(null)
+    setSelectedModel(null)
+    setSelectedTrailerType('open')
+    setSelectedOperability('running')
+    setSelectedShippingDateOption('asap')
+    setSelectedShippingDate(getDateYYYY_MM_DD(0))
+    setUserEmail('')
+    setUserPhone('')
+  }
+
   if (activeScreen === 'contacts') {
-    return <ContactsScreen setActiveScreen={setActiveScreen} />
+    return (
+      <ContactsScreen
+        setActiveScreen={setActiveScreen}
+        userEmail={userEmail}
+        setUserEmail={setUserEmail}
+        userPhone={userPhone}
+        setUserPhone={setUserPhone}
+        consistsOfDigits={consistsOfDigits}
+        createOrder={createOrder}
+      />
+    )
   }
 
   if (activeScreen === 'done') {
-    return <DoneScreen setActiveScreen={setActiveScreen} />
+    return (
+      <DoneScreen
+        setActiveScreen={setActiveScreen}
+      />
+    )
   }
 
   return (
@@ -93,6 +149,7 @@ function Calculator() {
           onChange={option => {
             setSelectedCityFrom(option)
             setPrice(null)
+            setCalculationId(null)
           }}
           placeholder="Departure city or zip"
         />
@@ -127,6 +184,7 @@ function Calculator() {
           onChange={option => {
             setSelectedCityTo(option)
             setPrice(null)
+            setCalculationId(null)
           }}
           placeholder="Destination city or zip"
         />
@@ -147,6 +205,7 @@ function Calculator() {
             setSelectedMake(null)
             setSelectedModel(null)
             setPrice(null)
+            setCalculationId(null)
           }}
           placeholder="Car year"
         />
@@ -162,6 +221,7 @@ function Calculator() {
             setSelectedMake(option)
             setSelectedModel(null)
             setPrice(null)
+            setCalculationId(null)
           }}
           placeholder="Car make"
           isDisabled={makes.length === 0}
@@ -173,6 +233,7 @@ function Calculator() {
           onChange={option => {
             setSelectedModel(option)
             setPrice(null)
+            setCalculationId(null)
           }}
           placeholder="Car model"
           isDisabled={models.length === 0}
@@ -191,6 +252,7 @@ function Calculator() {
                 onChange={() => {
                   setSelectedTrailerType('open')
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               Open
@@ -203,6 +265,7 @@ function Calculator() {
                 onChange={() => {
                   setSelectedTrailerType('enclosed')
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               Enclosed
@@ -221,6 +284,7 @@ function Calculator() {
                 onChange={() => {
                   setSelectedOperability('running')
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               Yes
@@ -233,6 +297,7 @@ function Calculator() {
                 onChange={() => {
                   setSelectedOperability('nonrunning')
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               No
@@ -254,6 +319,7 @@ function Calculator() {
                   setSelectedShippingDateOption('asap')
                   setSelectedShippingDate(getDateYYYY_MM_DD(0))
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               As soon as possible
@@ -267,6 +333,7 @@ function Calculator() {
                   setSelectedShippingDateOption('week')
                   setSelectedShippingDate(getDateYYYY_MM_DD(7))
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               In 1 week
@@ -280,6 +347,7 @@ function Calculator() {
                   setSelectedShippingDateOption('month')
                   setSelectedShippingDate(getDateYYYY_MM_DD(30))
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               In 30 days
@@ -292,6 +360,7 @@ function Calculator() {
                 onChange={() => {
                   setSelectedShippingDateOption('other')
                   setPrice(null)
+                  setCalculationId(null)
                 }}
               />
               Other
@@ -320,33 +389,46 @@ function Calculator() {
       </div>
 
       <div className={styles.calculatePrice}>
-        <button
-          className={styles.calculatePrice__calculate_button}
-          disabled={
-            [selectedCityFrom, selectedCityTo, selectedYear, selectedMake, selectedModel].includes(null)
-            || price !== null
-            || priceIsLoading
-          }
-          onClick={async () => {
-            setPriceIsLoading(true)
+        {calculationId === null
+          ? (
+            <button
+              className={styles.calculatePrice__calculate_button}
+              disabled={
+                [selectedCityFrom, selectedCityTo, selectedYear, selectedMake, selectedModel].includes(null)
+                || price !== null
+                || priceIsLoading
+              }
+              onClick={async () => {
+                setPriceIsLoading(true)
 
-            const price = await getPrice(
-              selectedCityFrom.value,
-              selectedCityTo.value,
-              selectedYear.value,
-              selectedMake.value,
-              selectedModel.value,
-              selectedTrailerType,
-              selectedOperability,
-              selectedShippingDate
-            )
-            
-            setPriceIsLoading(false)
-            setPrice(price)
-          }}
-        >
-          CALCULATE PRICE
-        </button>
+                const calculation = await getCalculation(
+                  selectedCityFrom.value,
+                  selectedCityTo.value,
+                  selectedYear.value,
+                  selectedMake.value,
+                  selectedModel.value,
+                  selectedTrailerType,
+                  selectedOperability,
+                  selectedShippingDate
+                )
+                
+                setPriceIsLoading(false)
+
+                setCalculationId(calculation.id)
+                setPrice(calculation.price)
+              }}
+            >
+              CALCULATE PRICE
+            </button>
+          ) : (
+            <button
+              className={styles.calculatePrice__calculate_button}
+              onClick={() => setActiveScreen('contacts')}
+            >
+              Book an order
+            </button>
+          )
+        }
       </div>
 
       <div className={styles.price}>
@@ -359,7 +441,7 @@ function Calculator() {
         {price !== null && (
           <div>
             <div>
-              Regular price: ${price}
+              Regular price: ${Math.floor(price)}
             </div>
 
             <div>

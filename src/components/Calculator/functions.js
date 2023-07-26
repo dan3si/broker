@@ -1,5 +1,3 @@
-import fake_emails from './fake_emails'
-
 export async function getCarMakes(year){
     const res = await fetch(`https://done.ship.cars/makes/?year=${year}`)
     const data = await res.json()
@@ -74,9 +72,9 @@ export async function getCities(shard, shardType) {
         return
     }
 
-    const res = await fetch('https://cors-anywhere.herokuapp.com/https://www.montway.com/es/gis/_suggest', {
+    const res = await fetch('https://hfspizdili-mw4nubnweq-uc.a.run.app/city', {
         method: 'POST',
-        headers: { "Authority": "www.montway.com" },
+        headers: { "Content-Type":"application/json" },
         body: JSON.stringify({
             city_state: {
                 text: shard,
@@ -100,64 +98,64 @@ export async function getCities(shard, shardType) {
       }))
 }
 
-export async function getPrice(cityFrom, cityTo, carYear, carMake, carModel, trailerType, operability, shippingDate) {
-    //GETTING _WPNONCE PARAMETER
-    const _wpnonceRes = await fetch("https://cors-anywhere.herokuapp.com/https://www.montway.com/wp/wp-admin/admin-ajax.php", {
-        method: "POST",
-        headers: {
-            "Authority": "www.montway.com",
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        },
-        body: 'action=calculator_nonce_create',
+export async function getCalculation(cityFrom, cityTo, carYear, carMake, carModel, trailerType, operability, shippingDate) {
+  const calculationRes = await fetch('https://hfspizdili-mw4nubnweq-uc.a.run.app/calculate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: `${cityFrom.city.split(' ').join('+')}%2C+${cityFrom.state}`,
+      to: `${cityTo.city.split(' ').join('+')}%2C+${cityTo.state}`,
+      year: carYear,
+      make: carMake,
+      model: carModel,
+      operable: operability,
+      type: trailerType,
+      date: shippingDate
     })
+  })
 
-    const _wpnonceData = await _wpnonceRes.text()
-    const _wpnonce = _wpnonceData.slice(
-        _wpnonceData.indexOf('value') + 7,
-        _wpnonceData.indexOf('/>') - 2,
-    )
+  const calculationData = await calculationRes.json()
 
-    //CREATING CALCULATION AND GETTING CALCULATION ID
-    const fake_email = fake_emails[Math.floor(Math.random() * fake_emails.length)]
-    const body = `
-        _wpnonce=${_wpnonce}&
-        _wp_http_referer=%2Fwp%2Fwp-admin%2Fadmin-ajax.php&
-        city_midpoint=&
-        city_from=${cityFrom.city.split(' ').join('+')}%2C+${cityFrom.state}&
-        city_to=${cityTo.city.split(' ').join('+')}%2C+${cityTo.state}&
-        transport_type=${trailerType}&
-        select_year=${carYear}&
-        vehicle=${carMake}&
-        vehicle_model=${carModel}&
-        operable=${operability}&
-        email_address=${fake_email}&
-        selected_shipping_date=${shippingDate}&
-        date_value=&
-        telephone=&
-        action=calculator
-    `.replace(/\s/g, '')
+  return {
+    id: calculationData.data.id,
+    price: calculationData.data.attributes.rates[3].price * 0.95
+  }
+}
 
-    const calculationIdRes = await fetch(
-        "https://cors-anywhere.herokuapp.com/https://www.montway.com/wp/wp-admin/admin-ajax.php",
-        {
-            method: "POST",
-            body: body,
-            headers: { "Authority": "www.montway.com", 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        }
-    )
+export async function createOrderRequest(
+  cityFrom,
+  cityTo,
+  carYear,
+  carMake,
+  carModel,
+  trailerType,
+  operability,
+  shippingDate,
+  calculationId,
+  userEmail,
+  userPhone,
+  price
+) {
+  const body = {
+    from: `${cityFrom.city.split(' ').join('+')}%2C+${cityFrom.state}`,
+    to: `${cityTo.city.split(' ').join('+')}%2C+${cityTo.state}`,
+    year: carYear,
+    make: carMake,
+    model: carModel,
+    operable: operability,
+    type: trailerType,
+    date: shippingDate,
+    calculationId,
+    userEmail,
+    userPhone,
+    price
+  }
 
-    const calculationIDData = await calculationIdRes.text()
-    const calculationID = calculationIDData.slice(
-        calculationIDData.indexOf('gtmData') + 11,
-        calculationIDData.indexOf("');")
-    )
+  const res = await fetch('https://hfspizdili-mw4nubnweq-uc.a.run.app/createOrder', {
+    method: 'POST',
+    headers:  { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
 
-
-    //GETTING PRICE
-    const calculationURL = `https://cors-anywhere.herokuapp.com/montway.com/partners/api/calculations/${calculationID}`
-    const priceRes = await fetch(calculationURL)
-    const priceData = await priceRes.json()
-    const price = priceData.data.attributes.rates[3].price * 0.95
-    
-    return price
+  const data = await res.text()
 }
