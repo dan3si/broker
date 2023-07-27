@@ -71,7 +71,7 @@ function Calculator() {
 
     setActiveScreen('done')
     setCalculationId(null)
-    setPricee(null)
+    setPrice(null)
 
     setCitiesFrom([])
     setCitiesTo([])
